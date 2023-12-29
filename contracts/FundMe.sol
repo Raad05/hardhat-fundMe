@@ -9,8 +9,11 @@ error NotOwner();
 contract FundMe {
     address public immutable i_owner;
 
-    constructor() {
+    AggregatorV3Interface public priceFeed;
+
+    constructor(address _priceFeedAddress) {
         i_owner = msg.sender;
+        priceFeed = AggregatorV3Interface(_priceFeedAddress);
     }
 
     using PriceConverter for uint;
@@ -22,7 +25,10 @@ contract FundMe {
     mapping(address => uint) public addressToAmountFunded;
 
     function sendFund() public payable {
-        require(msg.value.getConversionRates() > MIN_USD, "Insufficient fund");
+        require(
+            msg.value.getConversionRates(priceFeed) >= MIN_USD,
+            "Insufficient fund"
+        );
         // add funder
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
