@@ -1,5 +1,8 @@
 const { network } = require("hardhat");
-const { networkConfig } = require("../helper-hardhat-config");
+const {
+  networkConfig,
+  developmentChains,
+} = require("../helper-hardhat-config");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
@@ -9,7 +12,14 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // if chainId is X use address Y
   // if chainId is Z use address A
 
-  const ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
+  // const ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
+  let ethUsdPriceFeedAddress;
+  if (developmentChains.includes(network.name)) {
+    const ethUsdAggregator = await deployments.get("MockV3Aggragator");
+    ethUsdPriceFeedAddress = ethUsdAggregator.address;
+  } else {
+    ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
+  }
 
   // if the contract doesn't exist, we deploy a minimal version for our local testing
 
@@ -20,4 +30,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     args: [ethUsdPriceFeedAddress], // put priceFeed address
     log: true,
   });
+  log("--------------------------------------------");
 };
+
+module.exports.tags = ["all", "fundMe"];
