@@ -15,7 +15,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // const ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
   let ethUsdPriceFeedAddress;
   if (developmentChains.includes(network.name)) {
-    const ethUsdAggregator = await deployments.get("MockV3Aggragator");
+    const ethUsdAggregator = await deployments.get("MockV3Aggregator");
     ethUsdPriceFeedAddress = ethUsdAggregator.address;
   } else {
     ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
@@ -25,7 +25,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   // what happens when we want to change chains?
   // when going for localhost or hardhat network we want to use a mock
-  const fundMe = await deploy("fundMe", {
+  const fundMe = await deploy("FundMe", {
     from: deployer,
     args: [ethUsdPriceFeedAddress], // put priceFeed address
     log: true,
