@@ -38,4 +38,38 @@ describe("FundMe", async function () {
       assert.equal(funder, deployer);
     });
   });
+
+  describe("withdrawFund", async function () {
+    beforeEach(async function () {
+      await contract.sendFund({ value: sendValue });
+    });
+
+    it("withdraw ETH from a single funder", async function () {
+      // Arrange
+      const startingContractBalance = await ethers.provider.getBalance(
+        contract.target
+      );
+      const startingDeployerBalance = await ethers.provider.getBalance(
+        deployer
+      );
+
+      // Act
+      const txResponse = await contract.withdrawFund();
+      const txReceipt = await txResponse.wait(1);
+      const { gasUsed, gasPrice } = txReceipt;
+      const gasCost = gasUsed * gasPrice;
+
+      const endingContractBalance = await ethers.provider.getBalance(
+        contract.target
+      );
+      const endingDeployerBalance = await ethers.provider.getBalance(deployer);
+
+      // Assert
+      assert.equal(endingContractBalance, 0);
+      assert.equal(
+        (startingContractBalance + startingDeployerBalance).toString(),
+        (endingDeployerBalance + gasCost).toString()
+      );
+    });
+  });
 });
