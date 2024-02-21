@@ -32,6 +32,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     from: deployer,
     args: args, // put priceFeed address
     log: true,
+    waitConfirmations: network.config.blockConfirmations || 1,
   });
 
   if (
