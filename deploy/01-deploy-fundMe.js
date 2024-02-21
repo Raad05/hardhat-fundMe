@@ -22,7 +22,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   } else {
     ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
   }
-
   // if the contract doesn't exist, we deploy a minimal version for our local testing
 
   // what happens when we want to change chains?
